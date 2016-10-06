@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml">
+    
+    <ui:define name="footer">
+        
+    </ui:define>
+    
+    <ui:define name="content">
+        
+        <h:form id="formProducts">
+            
+            <p:menubar>
+                <p:submenu label="#{bundle['productManagement_menu_addNew']}" icon="fa fa-plus-circle">
+                    <p:menuitem value="#{bundle['productManagement_menu_createNewProduct']}" icon="fa fa-plus-square" update="formCreateNewProduct" oncomplete="PF('dialogCreateNewProduct').show();"/>
+                    <p:menuitem value="#{bundle['productManagement_menu_createNewCategory']}" icon="fa fa-plus-square" update="formCreateNewCategory" oncomplete="PF('dialogCreateNewCategory').show();" />
+                </p:submenu>
+            </p:menubar>
+            
+            <p:dataGrid id="dataTableProducts" var="product" value="#{productManagedBean.productsTotal}" columns="4" layout="grid"
+                        rows="8" paginator="true"
+                        paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                        rowsPerPageTemplate="8,16,24,32">
+                <f:facet name="header">
+                    #{bundle['productManagement_heading_productManagement']}
+                </f:facet>
+                <p:panel header="No.#{product.productId}" style="text-align:center;" >
+                    <h:panelGrid columns="1" style="width:100%">
+                        <center>
+                            <img height="60px" src="resources/img/#{product.name}.png"/>
+                            <p>#{bundle['productManagement_label_name']} #{product.name} <br/>#{bundle['productManagement_label_description']} #{product.description}</p>
+                        </center>
+                    </h:panelGrid>
+                </p:panel>
+            </p:dataGrid>
+        </h:form>
+        
+        <h:form id="formCreateNewCategory">
+            
+            <p:dialog id="dialogCreateNewCategory" widgetVar="dialogCreateNewCategory" header="#{bundle['productManagement_heading_newProductCategory']}" closable="true">
+                
+                <p:messages id="messagesCreateNewCategory" redisplay="false" />
+                
+                <p:panelGrid>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{bundle['productManagement_label_name']} " />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="name" value="#{productManagedBean.productCategory.name}" maxlength="255" required="true" requiredMessage="Category Name is required" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{bundle['productManagement_label_description']} " />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="description" value="#{productManagedBean.productCategory.description}" maxlength="255" required="true" requiredMessage="Description is required" />
+                        </p:column>
+                        
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:commandButton id="createNewCategory" value="#{bundle['productManagement_button_newProductCreate']}" icon="fa-save" actionListener="#{productManagedBean.createProductCategory}" update="messagesCreateNewCategory" oncomplete="PF('dialogCreateNewCategory').show();"/>
+                        </p:column>
+                    </p:row>
+                    
+                </p:panelGrid>
+                
+            </p:dialog>
+            
+        </h:form>
+        
+        <h:form id="formCreateNewProduct" >
+            
+            <p:dialog id="dialogCreateNewProduct" widgetVar="dialogCreateNewProduct" header="#{bundle['productManagement_heading_newProduct']}" closable="true">
+                
+                <p:messages id="messagesCreateNewProduct" redisplay="false" />
+                
+                <p:panelGrid>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{bundle['productManagement_label_productName']} " />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="name" value="#{productManagedBean.product.name}" maxlength="255" required="true" requiredMessage="Category Name is required" />
+                        </p:column>
+                        
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{bundle['productManagement_label_newDescription']} " />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="description" value="#{productManagedBean.product.description}" maxlength="255" required="true" requiredMessage="Description is required" />
+                        </p:column>
+                        
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel  value="#{bundle['productManagement_label_newInventory']} " />
+                        </p:column>I
+                        <p:column>
+                            <p:inputText id="inventory" value="#{productManagedBean.product.inventory}" maxlength="255" required="true" requiredMessage="Inventory is required" />
+                        </p:column>
+                        
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel  value="#{bundle['productManage_label_productCategory']} " />
+                        </p:column>I
+                        <p:column>
+                            <h:selectOneMenu id="productCat" value="#{productManagedBean.productCat}">
+                                <f:selectItem itemLabel="#{bundle['productManagement_label_newProductCategory']}" itemValue="" noSelectionOption="true" />
+                                <f:selectItems value="#{productManagedBean.catName}"/>
+                            </h:selectOneMenu>
+                        </p:column>
+                        
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:commandButton id="createNewProduct" value="#{bundle['productManagement_button_newProductCreate']}" icon="fa-save" actionListener="#{productManagedBean.createProduct()}" update="@form formProducts:dataTableProducts" ajax="true" oncomplete="PF('dialogCreateNewProduct').show();" />
+                        </p:column>
+                    </p:row>
+                    
+                </p:panelGrid>
+                
+            </p:dialog>
+            
+        </h:form>
+    </ui:define>
+    
+</ui:composition>

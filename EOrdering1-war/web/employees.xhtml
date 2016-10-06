@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml">
+    
+    <ui:define name="header">
+        <h1>#{bundle['employee_heading_employeeMnagement']}</h1>
+    </ui:define>
+    
+    <ui:define name="footer">
+        
+    </ui:define>
+    
+    <ui:define name="content">
+        
+        
+        
+        <h:form id="formEmployees">   
+            <p:messages id="messages" redisplay="false" closable="true" />
+            
+            <br />
+            
+            <p:dataTable id="dataTableEmployees" widgetVar="dataTableEmployees" value="#{adminManagedBean.employees}" var="employee" rowKey="#{employee.employeeId}" rows="10"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20"
+                         >
+                <f:facet name="header">
+                    #{bundle['employee_heading_accountManagement']}
+                </f:facet>
+                <p:column headerText="Id" sortBy="#{employee.employeeId}" style="width:5%">
+                    <center>
+                        <h:outputText value="#{employee.employeeId}" />
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['employee_label_name']}" sortBy="#{employee.firstName}" style="width:10%">
+                    <center>
+                        <h:outputText value="#{employee.firstName}" />
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['employee_label_Email']}" sortBy="#{employee.email}" style="width:30%">
+                    <center>
+                        <h:outputText value="#{employee.email}" />
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['employee_label_accountStatus']}" sortBy="#{employee.accountStatus}" style="width:10%">
+                    <center>
+                        <h:outputText value="#{bundle[employee.accountStatus]}" />
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['employee_label_createDate']}" sortBy="#{employee.createDate}" style="width:12%">
+                    <center>
+                        <h:outputText value="#{employee.createDate}" >
+                            <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" timeZone="Singapore"/>
+                        </h:outputText>
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['employee_label_adminStatus']}" sortBy="#{employee.isAdmin}" style="width:10%">
+                    <center>
+                        <h:outputText value="#{bundle[adminManagedBean.adminStatusConvert(employee.isAdmin)]}" />
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['employee_label_verificationCode']}" sortBy="#{employee.verificationCode}" style="width:12%">
+                    <center>
+                        <h:outputText value="#{employee.verificationCode}" />
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['employee_label_action']}" style="width:7%">
+                    <center>
+                        <p:commandButton update="formUpdateEmployee" oncomplete="PF('dialogUpdateEmployee').show()" icon="ui-icon-pencil" title="Update">
+                            <f:setPropertyActionListener value="#{employee}" target="#{adminManagedBean.selectedEmployee}" />
+                        </p:commandButton>
+                    </center>
+                </p:column> 
+                
+                <f:facet name="footer">
+                    #{bundle['employee_footer_totalNum1']} #{adminManagedBean.employees.size()} #{bundle['employee_footer_totalNum2']}
+                </f:facet>
+                
+            </p:dataTable>
+        </h:form>
+        
+        <h:form id="formUpdateEmployee">
+            
+            <p:dialog id="dialogUpdateEmployee" widgetVar="dialogUpdateEmployee" header="#{bundle['profile_button_update']}" closable="true">
+                
+                <p:messages id="messagesUpdateEmployee" redisplay="false" />
+                
+                <p:panelGrid>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="id" value="#{bundle['employee_label_employeeId']} " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText id="id" value="#{adminManagedBean.selectedEmployee.employeeId}"/>
+                            <h:inputHidden id="id1" value="#{adminManagedBean.selectedEmployee.employeeId}" required="true" requiredMessage="Email is required"/>
+                        </p:column>
+                        <p:column>
+                            <p:message for="id" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="email" value="#{bundle['employee_label_email']} " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText id="email" value="#{adminManagedBean.selectedEmployee.email}" />
+                            <h:inputHidden id="email1" value="#{adminManagedBean.selectedEmployee.email}" required="true" requiredMessage="Email is required" />
+                        </p:column>
+                        <p:column>
+                            <p:message for="email" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="firstName" value="#{bundle['employee_label_firstName']} " />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="firstName" value="#{adminManagedBean.selectedEmployee.firstName}" maxlength="255" required="true" requiredMessage="First Name is required" />
+                        </p:column>
+                        <p:column>
+                            <p:message for="firstName" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel for="lastName" value="#{bundle['employee_label_lastName']} " />
+                        </p:column>
+                        <p:column>
+                            <p:inputText id="lastName" value="#{adminManagedBean.selectedEmployee.lastName}" maxlength="255" required="true" requiredMessage="Last Name is required" />
+                        </p:column>
+                        <p:column>
+                            <p:message for="lastName" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{bundle['employee_label_admin']} " />
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu value="#{adminManagedBean.selectedEmployee.isAdmin}">
+                                <f:selectItem itemValue="true" itemLabel="#{bundle['employee_label_yes']}" />
+                                <f:selectItem itemValue="false" itemLabel="#{bundle['employee_label_no']}" />                               
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{bundle['employee_label_status']} " />
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu value="#{adminManagedBean.selectedEmployee.accountStatus}">
+                                <f:selectItem itemValue="Pending Verification" itemLabel="#{bundle['employee_label_pendingVerification']}" />
+                                <f:selectItem itemValue="Verified" itemLabel="#{bundle['employee_label_verified']}" />
+                                <f:selectItem itemValue="Suspended" itemLabel="#{bundle['employee_label_suspended']}" />                                
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:commandButton id="updateEmployee" value="#{bundle['employee_button_update']}" icon="fa-save" update="@form formEmployees:dataTableEmployees" ajax="true" actionListener="#{adminManagedBean.updateEmployeeProfile()}" oncomplete="PF('dialogUpdateEmployee').show();" />
+                        </p:column>
+                    </p:row>
+                    
+                </p:panelGrid>
+                
+            </p:dialog>
+            
+        </h:form>
+        
+    </ui:define>
+    
+</ui:composition>

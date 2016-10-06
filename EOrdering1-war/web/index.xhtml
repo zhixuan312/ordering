@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui">
+    
+    
+    
+    <ui:define name="footer">
+        
+    </ui:define>
+    
+    <ui:define name="content">
+        
+        
+        <style>
+            /*            .ui-tabs-nav {
+                            font-size:10pt;
+                            font-variant: small-caps;
+                        }*/
+        </style>
+        
+        <p:tabView>
+            <p:tab title="#{bundle['index_tag1_heading']}">
+                <h2>#{bundle['index_tag1_heading']}</h2>
+                <p>
+                    #{bundle['index_tab_content1']}
+                </p>
+                <p>
+                    #{bundle['index_tab_content2']}       
+                </p>                
+                
+            </p:tab>
+            <p:tab title="#{bundle['index_tag2_heading']}">                
+                <p>
+                    #{bundle['index_tab_content3']}     
+                </p>
+                <p>
+                    #{bundle['index_tab_content4']}
+                </p>
+                
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+    
+</ui:composition>

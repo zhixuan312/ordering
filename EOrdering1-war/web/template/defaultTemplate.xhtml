@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"  
+      >
+    <f:view>
+        
+        <h:head>
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /> 
+            <title>#{bundle['index_tag1_content_heading']}</title>
+        </h:head>
+        
+        <h:body>
+            
+            <p:layout fullPage="true">
+                
+                <p:layoutUnit position="north" size="50" resizable="true" closable="true" collapsible="true" >
+                    <div style="margin-top: 5px;margin-left: 10px;" >
+                        <a id='nav_logo' class="navbar-brand" href="http://localhost:8080/EOrdering1-war/"><img height="20px" src="resources/img/breadtalk_logo.png" /></a>
+                    </div>
+                    
+                </p:layoutUnit>
+                
+                
+                
+                <p:layoutUnit position="west" size="200" header="#{bundle['template_menu_MainMenu']}" collapsible="true">
+                    <h:form id="formMainMenu">
+                        <p:panelMenu >
+                            <p:submenu label="#{bundle['template_menu_heading1']}" >
+                                <p:menuitem value="#{bundle['template_menu1_content1']}" icon="fa fa-home" outcome="index" rendered="#{sessionScope['login'] eq null or sessionScope['login'] eq false}" />
+                                <p:menuitem value="#{bundle['template_menu1_content1']}" icon="fa fa-home" outcome="home" rendered="#{sessionScope['login'] ne null and sessionScope['login'] eq true}"  />
+                                <p:menuitem value="#{bundle['template_menu1_content2']}" icon="fa fa-sign-in" outcome="login.xhtml?faces-redirect=true" rendered="#{sessionScope['login'] eq null or sessionScope['login'] eq false}" />
+                                <p:menuitem value="#{bundle['template_menu1_content3']}" icon="fa fa-sign-out" actionListener="#{signUpAndLoginManagedBean.logout}" rendered="#{sessionScope['login'] ne null and sessionScope['login'] eq true}" />
+                                <p:menuitem value="#{bundle['template_menu1_content4']}" icon="fa fa-user-plus" outcome="register" />
+                            </p:submenu>
+                            <p:submenu label="#{bundle['template_menu_heading2']}">
+                                <p:menuitem value="#{bundle['template_menu2_content1']}" icon="fa fa-user" outcome="viewAndUpdateCustomerProfile" />
+                                <p:menuitem value="#{bundle['template_menu2_content2']}" icon="fa fa-shopping-cart" outcome="myCart" />
+                                <p:menuitem value="#{bundle['template_menu2_content3']}" icon="fa fa-cubes" outcome="product" />
+                                <p:menuitem value="#{bundle['template_menu2_content4']}" icon="fa fa-inbox" outcome="orders" />
+                                <p:menuitem value="#{bundle['Received']}" icon="fa fa-inbox" outcome="receiving" />
+                            </p:submenu>
+                            <p:submenu label="#{bundle['template_menu_heading3']}">
+                                <p:menuitem value="#{bundle['template_menu3_content1']}" icon="fa fa-users" outcome="employees" />
+                                <p:menuitem value="#{bundle['template_menu3_content2']}" icon="fa fa-cubes" outcome="productManagement" />
+                                <p:menuitem value="#{bundle['Order_Management']}" icon="fa fa-cubes" outcome="orderManagement" />
+                            </p:submenu>
+                        </p:panelMenu>
+                    </h:form>
+                </p:layoutUnit>
+                
+                <p:layoutUnit position="center">
+                    <ui:insert name="content">content</ui:insert>
+                </p:layoutUnit>
+                
+                <p:layoutUnit position="east" size="220" collapsible="true">
+                    <ui:insert name="east"></ui:insert>
+                </p:layoutUnit>
+            </p:layout>
+            
+        </h:body>
+        
+    </f:view>
+</html>

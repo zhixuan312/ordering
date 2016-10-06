@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml">
+    
+    <ui:define name="footer">
+        
+    </ui:define>
+    
+    <ui:define name="east">
+        <h:form>
+            <h:panelGrid columns="1">
+                <p:row>
+                    <h:outputText id="welcomeMessage" value="#{bundle['home_welcome_hi']} #{cartManagedBean.employee.firstName}!"></h:outputText>
+                </p:row>
+                <p:row>
+                    #{bundle['home_label_orderPlacement']}
+                </p:row> 
+                <p:row>
+                    <h:outputText value="#{cartManagedBean.orderCompleteDate}" style="color: red;font-weight: bold"></h:outputText>  
+                </p:row> 
+                <br/>
+                <br/>
+                <p:row>
+                    <h:outputText value="#{bundle['home_label_trackingMessage']}" ></h:outputText>
+                    <p:dataScroller value="#{checkOutManagedBean.sevenList()}" var="transaction"  >
+                        <h:panelGrid columns="1">
+                            <p:outputPanel>
+                                <h:panelGrid columns="1" cellpadding="5" width="150px">
+                                    <h:outputText value="#{transaction.expectDelivery.date}/#{transaction.expectDelivery.month+1}: #{bundle[transaction.status]}" style="font-size: 15" />
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </h:panelGrid>
+                    </p:dataScroller>
+                </p:row>
+            </h:panelGrid>
+        </h:form>
+    </ui:define>
+    
+    <ui:define name="content">
+        
+        <p:dataGrid id="dataTableProducts" var="product" value="#{productManagedBean.productsTotal}" columns="4" layout="grid"
+                    rows="8" paginator="true"
+                    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                    rowsPerPageTemplate="8,16,24,32">
+            <f:facet name="header">
+                #{bundle['product_label_product']}
+            </f:facet>
+            <p:panel header="No.#{product.productId}" style="text-align:center;" >
+                <h:panelGrid columns="1" style="width:100%;">
+                    <center>
+                        <img height="70px" src="resources/img/#{product.name}.png"/>
+                        <p style="text-align: center">#{product.name} #{product.description}</p>
+                        <p:commandButton value="#{bundle['product_button_addToCart']}" icon="fa fa-cart-arrow-down" type="submit" style="font-size: 15;margin-left:5%">
+                            <p:ajax listener="#{cartManagedBean.addCartItem(product)}" />
+                        </p:commandButton> 
+                        
+                    </center>
+                </h:panelGrid>
+            </p:panel>
+            
+        </p:dataGrid>
+        
+        
+    </ui:define>
+    
+</ui:composition>

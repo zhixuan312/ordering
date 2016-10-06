@@ -1,0 +1,146 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml">
+    
+    <ui:define name="footer">
+        
+    </ui:define>
+    
+    <ui:define name="east">
+        <h:form>
+            <h:panelGrid columns="1">
+                <p:row>
+                    <h:outputText id="welcomeMessage" value="#{bundle['home_welcome_hi']} #{cartManagedBean.employee.firstName}!"></h:outputText>
+                </p:row>
+                <p:row>
+                    #{bundle['home_label_orderPlacement']}
+                </p:row> 
+                <p:row>
+                    <h:outputText value="#{cartManagedBean.orderCompleteDate}" style="color: red;font-weight: bold"></h:outputText>  
+                </p:row> 
+                <br/>
+                <br/>
+                <p:row>
+                    <h:outputText value="#{bundle['home_label_trackingMessage']}" ></h:outputText>
+                    <p:dataScroller value="#{checkOutManagedBean.sevenList()}" var="transaction"  >
+                        <h:panelGrid columns="1">
+                            <p:outputPanel>
+                                <h:panelGrid columns="1" cellpadding="5" width="150px">
+                                    <h:outputText value="#{transaction.expectDelivery.date}/#{transaction.expectDelivery.month+1}: #{bundle[transaction.status]}" style="font-size: 15" />
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </h:panelGrid>
+                    </p:dataScroller>
+                </p:row>
+            </h:panelGrid>
+        </h:form>
+    </ui:define>
+    
+    <ui:define name="content">
+        <h:form id="formTransaction" >
+            <p:dataTable id="dataTableTransactions" widgetVar="dataTableTransactions" value="#{receivingManagedBean.receivingList}" var="transaction" rowKey="#{transaction.transactionId}" rows="10"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20"
+                         >
+                
+                <f:facet name="header">
+                    <p:outputPanel style="text-align: right;">
+                        <h:outputText value="#{bundle['order_label_search']}" />
+                        <p:inputText id="globalFilter" onkeyup="PF('dataTableTransactions').filter()" style="width:150px" placeholder="#{bundle['order_label_keyword']}"/>
+                    </p:outputPanel>
+                </f:facet>
+                <p:column style="width:2%">
+                    <p:rowToggler />
+                </p:column>
+                <p:column headerText="Id" sortBy="#{transaction.transactionId}" style="width:6%" filterMatchMode="contains" filterBy="#{transaction.transactionId}">
+                    <center>
+                        <h:outputText value="#{transaction.transactionId}" />
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['order_label_deliveryDate']}" sortBy="#{transaction.expectDelivery}" style="width:10%" filterMatchMode="contains" filterBy="#{transaction.expectDelivery}">
+                    <center>
+                        <h:outputText value="#{checkOutManagedBean.convertDateToStringInterval(transaction.expectDelivery)}" >
+                        </h:outputText>
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['actualDeliveryTime']}" sortBy="#{transaction.actualDelivery}" style="width:10%" filterMatchMode="contains" filterBy="#{transaction.actualDelivery}">
+                    <center>
+                        <h:outputText value="#{transaction.actualDelivery}" >
+                            <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" timeZone="Singapore"/>
+                        </h:outputText>
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['order_label_transactionDate']}" sortBy="#{transaction.transactionDateTime}" style="width:10%" filterMatchMode="contains" filterBy="#{transaction.transactionDateTime}">
+                    <center>
+                        <h:outputText value="#{transaction.transactionDateTime}" >
+                            <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" timeZone="Singapore"/>
+                        </h:outputText>
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['ReceivedBy']}" sortBy="#{transaction.employee}" style="width:7%" filterMatchMode="contains" filterBy="#{transaction.employee}">
+                    <center>
+                        <h:outputText value="#{transaction.employee.firstName}" >
+                            
+                        </h:outputText>
+                    </center>
+                </p:column>
+                
+                
+                <p:rowExpansion>
+                    <p:dataTable var="tli" value="#{transaction.transactionLineItems}">
+                        <p:column headerText="#{bundle['order_label_transactionItemId']}" style="width: 30px;">
+                            <center>
+                                <h:outputText value="#{tli.transactionLineItemId}" />
+                            </center>
+                        </p:column>
+                        
+                        <p:column headerText="#{bundle['order_label_icon']}" style="width: 50px;">
+                            <center>
+                                <img height="40px" width="40px" src="resources/img/#{tli.product.name}.png" />
+                            </center>
+                        </p:column>
+                        
+                        <p:column headerText="#{bundle['order_label_name']}" style="width: 50px;">
+                            <center>
+                                <h:outputText value="#{tli.product.name}" />
+                            </center>
+                        </p:column>
+                        
+                        <p:column headerText="#{bundle['expectedQuantity']}" style="width: 40px;">
+                            <center>
+                                <h:outputText value="#{tli.expectQuantity}" />
+                            </center>
+                        </p:column>
+                        
+                        <p:column headerText="#{bundle['actualQuantity']}" style="width: 40px;">
+                            <center>
+                                <h:outputText value="#{tli.actualQuantity}" />
+                            </center>
+                        </p:column>
+                        
+                        <p:column headerText="#{bundle['actualDeliveryTime']}" sortBy="#{tli.actualDelivery}" style="width:10%" filterMatchMode="contains" filterBy="#{tli.actualDelivery}">
+                            <center>
+                                <h:outputText value="#{tli.actualDelivery}" >
+                                    <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" timeZone="Singapore"/>
+                                </h:outputText>
+                            </center>
+                        </p:column>
+                        
+                    </p:dataTable>
+                </p:rowExpansion>
+            </p:dataTable>
+            
+        </h:form>
+        
+    </ui:define> 
+</ui:composition>

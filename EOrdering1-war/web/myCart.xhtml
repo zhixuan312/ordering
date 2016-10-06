@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    
+    <ui:define name="footer">
+        
+    </ui:define>
+    
+    <ui:define name="east">
+        <h:form>
+            <h:panelGrid columns="1">
+                <p:row>
+                    <h:outputText id="welcomeMessage" value="#{bundle['home_welcome_hi']} #{cartManagedBean.employee.firstName}!"></h:outputText>
+                </p:row>
+                <p:row>
+                    #{bundle['home_label_orderPlacement']}
+                </p:row> 
+                <p:row>
+                    <h:outputText value="#{cartManagedBean.orderCompleteDate}" style="color: red;font-weight: bold"></h:outputText>  
+                </p:row> 
+                <br/>
+                <br/>
+                <p:row>
+                    <h:outputText value="#{bundle['home_label_trackingMessage']}" ></h:outputText>
+                    <p:dataScroller value="#{checkOutManagedBean.sevenList()}" var="transaction"  >
+                        <h:panelGrid columns="1">
+                            <p:outputPanel>
+                                <h:panelGrid columns="1" cellpadding="5" width="150px">
+                                    <h:outputText value="#{transaction.expectDelivery.date}/#{transaction.expectDelivery.month+1}: #{bundle[transaction.status]}" style="font-size: 15" />
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </h:panelGrid>
+                    </p:dataScroller>
+                </p:row>
+            </h:panelGrid>
+        </h:form>
+    </ui:define>
+    
+    <ui:define name="content">
+        <h:form id="formCart" style="padding-left: 10%;">
+            <h:panelGrid columns="1" style="float: left;width: 50%;" >
+                <p:dataScroller value="#{cartManagedBean.cartLineItems}" var="cartLineItem">
+                    <h:panelGrid columns="4">
+                        <img width="50px" src="resources/img/#{cartLineItem.product.name}.png" />
+                        <p:outputPanel>
+                            <h:panelGrid columns="1" width="150px">
+                                <h:outputText value="#{cartLineItem.product.name}" />
+                                <h:outputText value="#{cartLineItem.product.description}" />
+                            </h:panelGrid>
+                        </p:outputPanel>
+                        <p:spinner id="basic" value="#{cartLineItem.quantity}" min="0" size="5">
+                            <p:ajax listener="#{cartManagedBean.updateQuantity(cartLineItem.cartLineItemId,cartLineItem.quantity)}" />
+                        </p:spinner>
+                        <p:commandButton icon="fa fa-close" style="margin-left: 20%" actionListener="#{cartManagedBean.deleteCartLineItem(cartLineItem.cartLineItemId)}" update="@form formCart" />
+                    </h:panelGrid>
+                </p:dataScroller>
+            </h:panelGrid>
+            <h:panelGrid columns="2" style="width: 50%;">
+                <h:outputText value="#{bundle['cart_label_deliveryDate']} "></h:outputText>
+                <br/>
+                <p:calendar id="cal"  value="#{cartManagedBean.deliveryDateTime}" pattern="MM/dd/yyyy" mindate="#{cartManagedBean.today}" >
+                    <p:ajax event="dateSelect" listener="#{cartManagedBean.dateValidation}" />
+                </p:calendar>
+                <h:selectOneMenu value="#{cartManagedBean.deliveryHour}">
+                    <f:selectItem itemLabel="#{bundle['cart_label_selectone']}" itemValue="" noSelectionOption="true" />
+                    <f:selectItem itemValue="8" itemLabel="08:00 - 10:00" />
+                    <f:selectItem itemValue="10" itemLabel="10:00 - 12:00" />   
+                    <f:selectItem itemValue="12" itemLabel="12:00 - 14:00" />
+                    <f:selectItem itemValue="14" itemLabel="14:00 - 16:00" />
+                    <f:selectItem itemValue="16" itemLabel="16:00 - 18:00" />
+                    <f:selectItem itemValue="18" itemLabel="18:00 - 20:00" />
+                </h:selectOneMenu>
+                <p:commandButton value="#{bundle['cart_button_checkout']}" update="formConfirm" oncomplete="PF('dialogConfirm').show();" >
+                    
+                </p:commandButton>
+            </h:panelGrid>
+        </h:form>
+        
+        <h:form id="formConfirm">
+            <p:dialog header="Confirmation" id="dialogConfirm" widgetVar="dialogConfirm"  closable="true">
+                <h:outputText value="#{cartManagedBean.validateString}" />
+                <br/>
+                <br/>
+                <p:commandButton style="float: right" value="Confirm" icon="ui-icon-check" actionListener="#{checkOutManagedBean.checkOut()}"/>
+            </p:dialog>
+        </h:form>
+    </ui:define> 
+    
+</ui:composition>

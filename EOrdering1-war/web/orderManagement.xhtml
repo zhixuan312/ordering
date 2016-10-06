@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE composition PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="./template/defaultTemplate.xhtml"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:f="http://xmlns.jcp.org/jsf/core"
+                xmlns="http://www.w3.org/1999/xhtml">
+    
+    <ui:define name="footer">
+        
+    </ui:define>
+    
+    <ui:define name="east">
+        <h:form>
+            <h:panelGrid columns="1">
+                <p:row>
+                    <h:outputText id="welcomeMessage" value="#{bundle['home_welcome_hi']} #{cartManagedBean.employee.firstName}!"></h:outputText>
+                </p:row>
+                <p:row>
+                    #{bundle['home_label_orderPlacement']}
+                </p:row> 
+                <p:row>
+                    <h:outputText value="#{cartManagedBean.orderCompleteDate}" style="color: red;font-weight: bold"></h:outputText>  
+                </p:row> 
+                <br/>
+                <br/>
+                <p:row>
+                    <h:outputText value="#{bundle['home_label_trackingMessage']}" ></h:outputText>
+                    <p:dataScroller value="#{checkOutManagedBean.sevenList()}" var="transaction"  >
+                        <h:panelGrid columns="1">
+                            <p:outputPanel>
+                                <h:panelGrid columns="1" cellpadding="5" width="150px">
+                                    <h:outputText value="#{transaction.expectDelivery.date}/#{transaction.expectDelivery.month+1}: #{bundle[transaction.status]}" style="font-size: 15" />
+                                </h:panelGrid>
+                            </p:outputPanel>
+                        </h:panelGrid>
+                    </p:dataScroller>
+                </p:row>
+            </h:panelGrid>
+        </h:form>
+    </ui:define>
+    
+    <ui:define name="content">
+        <h:form id="formTransaction" >
+            <p:dataTable id="dataTableTransactions" widgetVar="dataTableTransactions" value="#{orderManagedBean.transactionList}" var="transaction" rowKey="#{transaction.transactionId}" rows="10"
+                         paginator="true"
+                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         rowsPerPageTemplate="5,10,15,20"
+                         >
+                
+                <f:facet name="header">
+                    <p:outputPanel style="text-align: right;">
+                        <h:outputText value="#{bundle['order_label_search']}" />
+                        <p:inputText id="globalFilter" onkeyup="PF('dataTableTransactions').filter()" style="width:150px" placeholder="#{bundle['order_label_keyword']}"/>
+                    </p:outputPanel>
+                </f:facet>
+                <p:column style="width:2%">
+                    <p:rowToggler />
+                </p:column>
+                <p:column headerText="Id" sortBy="#{transaction.transactionId}" style="width:6%" filterMatchMode="contains" filterBy="#{transaction.transactionId}">
+                    <center>
+                        <h:outputText value="#{transaction.transactionId}" />
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['order_label_status']}" sortBy="#{transaction.status}" style="width:7%" filterMatchMode="exact" filterBy="#{transaction.status}">
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('dataTableTransactions').filter()" >
+                            <f:selectItem itemLabel="#{bundle['cart_label_selectone']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemValue="Order Placed" itemLabel="#{bundle['Order Placed']}" />
+                            <f:selectItem itemValue="In Transit" itemLabel="#{bundle['In Transit']}" />   
+                            <f:selectItem itemValue="Delivered" itemLabel="#{bundle['Delivered']}" />
+                            <f:selectItem itemValue="Received" itemLabel="#{bundle['Received']}" />
+                            <f:selectItem itemValue="Unconfirmed" itemLabel="#{bundle['unconfirmed']}" />
+                            <f:selectItem itemValue="Deny" itemLabel="#{bundle['Deny']}" />
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <center>
+                        <h:outputText value="#{bundle[transaction.status]}" />
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['order_label_deliveryDate']}" sortBy="#{transaction.expectDelivery}" style="width:10%" filterMatchMode="contains" filterBy="#{transaction.expectDelivery}">
+                    <center>
+                        <h:outputText value="#{checkOutManagedBean.convertDateToStringInterval(transaction.expectDelivery)}" >
+                        </h:outputText>
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['order_label_transactionDate']}" sortBy="#{transaction.transactionDateTime}" style="width:10%" filterMatchMode="contains" filterBy="#{transaction.transactionDateTime}">
+                    <center>
+                        <h:outputText value="#{transaction.transactionDateTime}" >
+                            <f:convertDateTime pattern="MM/dd/yyyy hh:mm a" timeZone="Singapore"/>
+                        </h:outputText>
+                    </center>
+                </p:column>
+                
+                <p:column headerText="#{bundle['Edit']}" style="width:5%">
+                    <center>
+                        <p:commandButton update="formEditOrder" oncomplete="PF('dialogEditOrder').show()" icon="fa fa-pencil-square-o" title="#{bundle['Edit']}">
+                            <f:setPropertyActionListener value="#{transaction}" target="#{orderManagedBean.selectedTransaction}" />
+                        </p:commandButton>
+                    </center>
+                </p:column> 
+                
+                <f:facet name="footer">
+                    #{bundle['order_footer_totalNum1']} #{orderManagedBean.transactionList.size()} #{bundle['order_footer_totalNum2']}
+                </f:facet>
+                
+                <p:rowExpansion>
+                    <p:dataTable var="tli" value="#{transaction.transactionLineItems}">
+                        <p:column headerText="#{bundle['order_label_transactionItemId']}" style="width: 30px;">
+                            <center>
+                                <h:outputText value="#{tli.transactionLineItemId}" />
+                            </center>
+                        </p:column>
+                        
+                        <p:column headerText="#{bundle['order_label_icon']}" style="width: 50px;">
+                            <center>
+                                <img height="40px" width="40px" src="resources/img/#{tli.product.name}.png" />
+                            </center>
+                        </p:column>
+                        
+                        <p:column headerText="#{bundle['order_label_name']}" style="width: 50px;">
+                            <center>
+                                <h:outputText value="#{tli.product.name}" />
+                            </center>
+                        </p:column>
+                        
+                        <!--                        <p:column headerText="Unit Charge" style="width: 40px;">
+                                                    <h:outputText value="#{tli.unitCharge}">
+                                                        <f:convertNumber type="currency" />
+                                                    </h:outputText>
+                                                </p:column>-->
+                        
+                        <p:column headerText="#{bundle['order_label_quantity']}" style="width: 40px;">
+                            <center>
+                                <h:outputText value="#{tli.expectQuantity}" />
+                            </center>
+                        </p:column>
+                        
+                        <!--                        <p:column headerText="Subtotal" style="width: 40px;">
+                                                    <h:outputText value="#{tli.totalCharge}">
+                                                        <f:convertNumber type="currency" />
+                                                    </h:outputText>
+                                                </p:column>-->
+                    </p:dataTable>
+                </p:rowExpansion>
+            </p:dataTable>
+            
+        </h:form>
+        
+        <h:form id="formEditOrder">
+            
+            <p:dialog id="dialogEditOrder" widgetVar="dialogEditOrder" header="#{bundle['Edit']}" closable="true">
+                
+                <p:messages id="messagesEditOrders" redisplay="false" />
+                
+                <p:panelGrid>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{bundle['Order_Id']} " />
+                        </p:column>
+                        <p:column>
+                            <h:outputText id="id" value="#{orderManagedBean.selectedTransaction.transactionId}"/>
+                            <h:inputHidden id="id1" value="#{orderManagedBean.selectedTransaction.transactionId}" required="true" />
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column>
+                            <p:outputLabel value="#{bundle['employee_label_status']} " />
+                        </p:column>
+                        <p:column>
+                            <h:selectOneMenu value="#{orderManagedBean.selectedTransaction.status}">
+                                <f:selectItem itemLabel="#{bundle['cart_label_selectone']}" itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItem itemValue="Order Placed" itemLabel="#{bundle['Order Placed']}" />
+                                <f:selectItem itemValue="In Transit" itemLabel="#{bundle['In Transit']}" />   
+                                <f:selectItem itemValue="Delivered" itemLabel="#{bundle['Delivered']}" />
+                                <f:selectItem itemValue="Received" itemLabel="#{bundle['Received']}" /> 
+                                <f:selectItem itemValue="Unconfirmed" itemLabel="#{bundle['unconfirmed']}" />
+                                <f:selectItem itemValue="Deny" itemLabel="#{bundle['Deny']}" />
+                            </h:selectOneMenu>
+                        </p:column>
+                    </p:row>
+                    
+                    <p:row>
+                        <p:column colspan="3">
+                            <p:commandButton value="#{bundle['employee_button_update']}" icon="fa-save" update="@form formTransaction:dataTableTransactions" ajax="true" actionListener="#{orderManagedBean.updateTrnasactionStatus()}" oncomplete="PF('dialogEditOrder').show();" />
+                        </p:column>
+                    </p:row>
+                    
+                </p:panelGrid>
+                
+            </p:dialog>
+            
+        </h:form>
+        
+    </ui:define>
+    
+</ui:composition>
